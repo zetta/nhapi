@@ -1,0 +1,4 @@
+cron:
+- description: Fetch new data
+  url: /tasks/fetch
+  schedule: every 10 minutes

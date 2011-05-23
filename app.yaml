@@ -1,0 +1,9 @@
+application: nhapi
+runtime: python
+version: 1
+api_version: 1
+
+handlers:
+- url: /tasks/fetch
+  script: fetch.py
+  login: admin
