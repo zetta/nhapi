@@ -52,7 +52,7 @@ def put_user(nickname):
       twinfo =  getJson("https://api.twitter.com/1/users/show/%s.json" % info['twitter'])
       avatar = twinfo['profile_image_url']
     else:
-      avatar = ''
+      avatar = None
     user =  User(
       nickname = nickname,
       lowercase_nickname = nickname,
