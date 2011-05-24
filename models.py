@@ -32,17 +32,18 @@ class User(db.Model):
   avatar              = db.StringProperty(required=False)
   
 class Post(db.Model):
-  title     = db.StringProperty(required=True)
-  slug      = db.StringProperty(required=True)
-  url       = db.LinkProperty(required=False)
-  message   = db.TextProperty()
-  user      = db.ReferenceProperty(User, collection_name='posts')
-  created   = db.DateTimeProperty(auto_now_add=True)
-  karma     = db.FloatProperty()
-  edited    = db.BooleanProperty(default=False)
-  twittered = db.BooleanProperty(default=False)
-  
-  
+  oid           = db.StringProperty(required=True)
+  title         = db.StringProperty(required=True)
+  url           = db.LinkProperty(required=False)
+  message       = db.TextProperty()
+  user          = db.ReferenceProperty(User, collection_name='posts')
+  created       = db.DateTimeProperty(auto_now_add=True)
+  karma         = db.FloatProperty()
+  edited        = db.BooleanProperty(default=False)
+  twittered     = db.BooleanProperty(default=False)
+  votes         = db.IntegerProperty(required=False)
+  comment_count = db.IntegerProperty(required=False)
+   
 class Comment(db.Model):
   message = db.TextProperty()
   user    = db.ReferenceProperty(User, collection_name='comments')
@@ -53,12 +54,12 @@ class Comment(db.Model):
   edited  = db.BooleanProperty(default=False)
 
 
-class Vote(db.Model):
-  user        = db.ReferenceProperty(User, collection_name='votes')
-  target_user = db.ReferenceProperty(User, collection_name='received_votes')
-  post        = db.ReferenceProperty(Post, collection_name='votes')
-  comment     = db.ReferenceProperty(Comment, collection_name='votes')
-  created     = db.DateTimeProperty(auto_now_add=True)
+#class Vote(db.Model):
+#  user        = db.ReferenceProperty(User, collection_name='votes')
+#  target_user = db.ReferenceProperty(User, collection_name='received_votes')
+#  post        = db.ReferenceProperty(Post, collection_name='votes')
+#  comment     = db.ReferenceProperty(Comment, collection_name='votes')
+#  created     = db.DateTimeProperty(auto_now_add=True)
 
 class Notification(db.Model):
   target_user = db.ReferenceProperty(User, collection_name='notifications')

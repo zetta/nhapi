@@ -6,4 +6,3 @@ api_version: 1
 handlers:
 - url: /tasks/fetch
   script: fetch.py
-  login: admin

@@ -9,14 +9,25 @@ from django.utils import simplejson
 
 import utils
 
-from models import User
+from models import User, Post, Comment, Notification, Ticket
 
 class FetchHandler(webapp.RequestHandler):
   def get(self):
-    json_url = 'http://www.noticiashacker.com/nuevo.json'
-    js = utils.fetchUrl(json_url)
-    js_object = simplejson.loads(js)
-    print js_object 
+  
+     #usuarios_twitter = utils.getJson("http://www.noticiashacker.com/api/usuarios/twitter");
+  
+    #print "hola"
+  
+    for n in range(1, 11): 
+      json_url = 'http://www.noticiashacker.com/nuevo.json?pagina=%d'
+      noticias = utils.getJson(json_url % n)    
+   
+      for noticia in noticias['posts']:
+         user = utils.put_user(noticia['user'])
+         post = utils.put_post(noticia,user)
+
+    self.response.headers['Content-Type'] = 'application/json'
+    self.response.out.write( 'finish' )
 
 
 def main():
