@@ -16,18 +16,20 @@ class FetchHandler(webapp.RequestHandler):
   
      #usuarios_twitter = utils.getJson("http://www.noticiashacker.com/api/usuarios/twitter");
   
-    #print "hola"
+    print "starting..."
   
     for n in range(1, 11): 
+      print "reading sheet"
       json_url = 'http://www.noticiashacker.com/nuevo.json?pagina=%d'
       noticias = utils.getJson(json_url % n)    
    
       for noticia in noticias['posts']:
+         print "reading noticia..."
          user = utils.put_user(noticia['user'])
          post = utils.put_post(noticia,user)
 
-    self.response.headers['Content-Type'] = 'application/json'
-    self.response.out.write( 'finish' )
+    #self.response.headers['Content-Type'] = 'text/plain'
+    #self.response.out.write( 'finish' )
 
 
 def main():

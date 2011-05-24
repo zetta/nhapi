@@ -39,21 +39,31 @@ def put_user(nickname):
   u = User.all().filter('nickname =',nickname).fetch(1)
   if len(u) == 1:
     user = u[0]
+    print "user exists"
+    if user.twitter != '' and user.avatar == None:
+      print "updating avatar"
+      twinfo = getJson("https://api.twitter.com/1/users/show/%s.json" % user.twitter)
+      user.avatar = twinfo['profile_image_url']
+      user.put()
   else:
+    print "creating new user"
     info = getJson("http://www.noticiashacker.com/perfil/%s.json" % nickname);
+    if  info['twitter'] != '':
+      twinfo =  getJson("https://api.twitter.com/1/users/show/%s.json" % info['twitter'])
+      avatar = twinfo['profile_image_url']
+    else:
+      avatar = ''
     user =  User(
       nickname = nickname,
       lowercase_nickname = nickname,
       password = 'a',
+      avatar = avatar,
       twitter = info['twitter'],
       hnuser = info['hn'],
       github = info['github'],
       karma = info['karma']
     ).put()
   
-  #if user.twitter != '' and user.avatar = '':
-    #twinfo =   
-    
   return user
   
 def put_post(noticia,user):
