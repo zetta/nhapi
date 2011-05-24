@@ -13,11 +13,7 @@ from models import User, Post, Comment, Notification, Ticket
 
 class FetchHandler(webapp.RequestHandler):
   def get(self):
-  
-     #usuarios_twitter = utils.getJson("http://www.noticiashacker.com/api/usuarios/twitter");
-  
     print "starting..."
-  
     for n in range(1, 11): 
       print "reading sheet"
       json_url = 'http://www.noticiashacker.com/nuevo.json?pagina=%d'
@@ -27,9 +23,6 @@ class FetchHandler(webapp.RequestHandler):
          print "reading noticia..."
          user = utils.put_user(noticia['user'])
          post = utils.put_post(noticia,user)
-
-    #self.response.headers['Content-Type'] = 'text/plain'
-    #self.response.out.write( 'finish' )
 
 
 def main():

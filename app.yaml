@@ -6,3 +6,5 @@ api_version: 1
 handlers:
 - url: /tasks/fetch
   script: fetch.py
+- url: /.+
+  script: main.py

@@ -101,6 +101,18 @@ def calculate_karma(post):
     post.karma = karma 
     
 
+def post_to_json(post):
+   return {
+      'id':str(post.key()),
+      'title':post.title,
+      'message':post.message,
+      'created':post.created.strftime("%s"),
+      'user':post.user.nickname,
+      'avatar': post.user.avatar,
+      'comment_count':post.comment_count,
+      'url':post.url,	  
+      'votes':post.votes
+   }
 
 
 
