@@ -1,4 +1,6 @@
 
+from google.appengine.api import memcache
+
 from datetime import datetime
 from django.utils import simplejson
 import urllib
@@ -114,7 +116,33 @@ def post_to_json(post):
       'votes':post.votes
    }
 
+def get_new_posts(page):
+    posts = memcache.get("new_%s" % page)
+    if posts is not None:
+        return posts
+    else:
+        perPage = 20
+        page = int(page) if page else 1
+        realPage = page - 1
+        if realPage > 0:
+          prevPage = realPage
+        posts = Post.all().order('-created').fetch(perPage, realPage * perPage)
+        memcache.add("new_%d" % page, posts, 250)
+    return posts
 
+def get_top_posts(page):
+    posts = memcache.get("new_%s" % page)
+    if posts is not None:
+        return posts
+    else:
+        perPage = 20
+        page = int(page) if page else 1
+        realPage = page - 1
+        if realPage > 0:
+          prevPage = realPage
+        posts = Post.all().order('-karma').fetch(perPage, realPage * perPage)
+        memcache.add("new_%d" % page, posts, 250)
+    return posts
 
 
 

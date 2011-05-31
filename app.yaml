@@ -1,6 +1,6 @@
 application: nhjsonapi
 runtime: python
-version: 1
+version: 1-1
 api_version: 1
 
 handlers:
