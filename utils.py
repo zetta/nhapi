@@ -131,7 +131,7 @@ def get_new_posts(page):
     return posts
 
 def get_top_posts(page):
-    posts = memcache.get("new_%s" % page)
+    posts = memcache.get("top_%s" % page)
     if posts is not None:
         return posts
     else:
