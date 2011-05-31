@@ -27,7 +27,7 @@ class MainHandler(webapp.RequestHandler):
 class NewHandler(webapp.RequestHandler):
   def get(self):
     page = escape(self.request.get('page'))
-    posts = utils.get_new_posts(perPage, realPage)
+    posts = utils.get_new_posts(page)
     
     posts_json = [utils.post_to_json(p) for p in posts]
     if(self.request.get('callback')):
