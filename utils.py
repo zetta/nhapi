@@ -70,10 +70,10 @@ def put_post(noticia,user):
   p = Post.all().filter('oid = ',noticia['id']).fetch(1)
   if len(p) == 1:
     post = p[0]
-    if post.votes != noticia['votes']:
-      post.votes = noticia['votes']
-      calculate_karma(post)
-      post.put()
+    #if post.votes != noticia['votes']:
+    post.votes = noticia['votes']
+    calculate_karma(post)
+    post.put()
   else:
     post = Post(
       oid = noticia['id'],

@@ -14,7 +14,7 @@ from models import User, Post, Comment, Notification, Ticket
 class FetchHandler(webapp.RequestHandler):
   def get(self):
     print "starting..."
-    for n in range(1, 11): 
+    for n in range(1, 6): 
       print "reading sheet"
       json_url = 'http://www.noticiashacker.com/nuevo.json?pagina=%d'
       noticias = utils.getJson(json_url % n)    
