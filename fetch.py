@@ -13,16 +13,16 @@ from models import User, Post, Comment, Notification, Ticket
 
 class FetchHandler(webapp.RequestHandler):
   def get(self):
-    print "starting..."
-    for n in range(1, 6): 
-      print "reading sheet"
+    tic = utils.microtime(True)
+    for n in range(1, 11): 
       json_url = 'http://www.noticiashacker.com/nuevo.json?pagina=%d'
       noticias = utils.getJson(json_url % n)    
    
       for noticia in noticias['posts']:
-         print "reading noticia..."
          user = utils.put_user(noticia['user'])
          post = utils.put_post(noticia,user)
+    toc = utils.microtime(True)
+    print "Time elapsed %f seconds" % (toc-tic)
 
 
 def main():

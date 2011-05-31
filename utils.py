@@ -5,7 +5,9 @@ from datetime import datetime
 from django.utils import simplejson
 import urllib
 import urllib2
-
+import time
+import math
+import md5
 from models import User, Post, Comment, Notification, Ticket
 
 
@@ -13,24 +15,35 @@ def fetchUrl(url,
               post_data=None,
               parameters=None,
               no_cache=None,
+              life = 30,
               use_gzip_compression=None):
   '''Fetch a URL, 
   Returns:
     A string containing the body of the response.
   '''
-  http_handler  = urllib2.HTTPHandler(debuglevel=0)
-  https_handler = urllib2.HTTPSHandler(debuglevel=0)
+  key = md5.new(url).hexdigest()
+  raw_data = memcache.get(key)
+  if raw_data is not None:
+    return raw_data
+  else:
+    http_handler  = urllib2.HTTPHandler(debuglevel=0)
+    https_handler = urllib2.HTTPSHandler(debuglevel=0)
 
-  opener = urllib2.OpenerDirector()
-  opener.add_handler(http_handler)
-  opener.add_handler(https_handler)
+    opener = urllib2.OpenerDirector()
+    opener.add_handler(http_handler)
+    opener.add_handler(https_handler)
 
-  response = opener.open(url)
-  raw_data = response.read()
-  opener.close()
-  return raw_data
+    response = opener.open(url)
+    raw_data = response.read()
+    opener.close()
+    memcache.add(key, raw_data, life)
+    return raw_data
 
- 
+def microtime(get_as_float = False) :
+    if get_as_float:
+        return time.time()
+    else:
+        return '%f %d' % math.modf(time.time())
 
 def getJson(json_url):
   json = fetchUrl(json_url)
@@ -41,14 +54,25 @@ def put_user(nickname):
   u = User.all().filter('nickname =',nickname).fetch(1)
   if len(u) == 1:
     user = u[0]
-    print "user exists"
+    should_update = False
+    delta = (datetime.now() - user.last_modified)
+    seconds = delta.seconds + delta.days*86400
+    hours = seconds / 3600 + 1
+    if user.twitter == '' and hours > 24 :
+        info = getJson("http://www.noticiashacker.com/perfil/%s.json" % nickname);
+        if info['twitter'] != '':
+          user.twitter = info['twitter']
+          should_update = True
     if user.twitter != '' and user.avatar == None:
-      print "updating avatar"
       twinfo = getJson("https://api.twitter.com/1/users/show/%s.json" % user.twitter)
       user.avatar = twinfo['profile_image_url']
+      should_update = True
+    if hours > 24 and not should_update:
+      user.last_modified = datetime.now()
+      should_update = True
+    if should_update:
       user.put()
   else:
-    print "creating new user"
     info = getJson("http://www.noticiashacker.com/perfil/%s.json" % nickname);
     if  info['twitter'] != '':
       twinfo =  getJson("https://api.twitter.com/1/users/show/%s.json" % info['twitter'])
@@ -72,9 +96,8 @@ def put_post(noticia,user):
   p = Post.all().filter('oid = ',noticia['id']).fetch(1)
   if len(p) == 1:
     post = p[0]
-    #if post.votes != noticia['votes']:
     post.votes = noticia['votes']
-    calculate_karma(post)
+    calculate_karma(post) ## aunque los votos no hayan cambiado, debemos calcular el karma pues el tiempo si esta avanzando
     post.put()
   else:
     post = Post(
